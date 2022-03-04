@@ -47,7 +47,7 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 		)
 		if [ "$uid" != '0' ]; then
 			# avoid "tar: .: Cannot utime: Operation not permitted" and "tar: .: Cannot change mode to rwxr-xr-x: Operation not permitted"
-			targetTarArgs+=( --no-overwrite-dir )
+			targetTarArgs+=( --no-overwrite-dir ) 2> /dev/null
 		fi
 		# loop over "pluggable" content in the source, and if it already exists in the destination, skip it
 		# https://github.com/docker-library/wordpress/issues/506 ("wp-content" persisted, "akismet" updated, WordPress container restarted/recreated, "akismet" downgraded)
@@ -57,10 +57,10 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 		; do
 			contentPath="${contentPath%/}"
 			[ -e "$contentPath" ] || continue
-			contentPath="${contentPath#/usr/src/wordpress/}" # "wp-content/plugins/akismet", etc.
+			contentPath="${contentPath#/usr/src/wordpress/}" 2> /dev/null # "wp-content/plugins/akismet", etc.
 			if [ -e "$PWD/$contentPath" ]; then
-				echo >&2 "WARNING: '$PWD/$contentPath' exists! (not copying the WordPress version)"
-				sourceTarArgs+=( --exclude "./$contentPath" )
+				echo >&2 "WARNING: '$PWD/$contentPath' exists! (not copying the WordPress version)" 2> /dev/null
+				sourceTarArgs+=( --exclude "./$contentPath" ) 2> /dev/null
 			fi
 		done
 		tar "${sourceTarArgs[@]}" . | tar "${targetTarArgs[@]}"
