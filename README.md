@@ -1,3 +1,3 @@
 ## Wordpress
 
-This repo maintained by Deck Developer
+This repo maintained by Developer
