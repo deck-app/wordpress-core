@@ -1,3 +1,3 @@
 ## Wordpress
 
-This repo maintained by Developer 
+Maintained by: the Docker Community

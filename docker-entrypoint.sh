@@ -28,7 +28,7 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 	if [ ! -e index.php ] && [ ! -e wp-includes/version.php ]; then
 		# if the directory exists and WordPress doesn't appear to be installed AND the permissions of it are root:root, let's chown it (likely a Docker-created directory)
 		if [ "$uid" = '0' ] && [ "$(stat -c '%u:%g' .)" = '0:0' ]; then
-			chown "$user:$group" . 2> /dev/null
+			chown "$user:$group" .
 		fi
 
 		echo >&2 "WordPress not found in $PWD - copying now..."
@@ -40,14 +40,14 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 			--file -
 			--directory /usr/src/wordpress
 			--owner "$user" --group "$group"
-		) 2> /dev/null
+		)
 		targetTarArgs=(
 			--extract
 			--file -
 		)
 		if [ "$uid" != '0' ]; then
 			# avoid "tar: .: Cannot utime: Operation not permitted" and "tar: .: Cannot change mode to rwxr-xr-x: Operation not permitted"
-			targetTarArgs+=( --no-overwrite-dir ) 2> /dev/null
+			targetTarArgs+=( --no-overwrite-dir )
 		fi
 		# loop over "pluggable" content in the source, and if it already exists in the destination, skip it
 		# https://github.com/docker-library/wordpress/issues/506 ("wp-content" persisted, "akismet" updated, WordPress container restarted/recreated, "akismet" downgraded)
@@ -57,13 +57,13 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 		; do
 			contentPath="${contentPath%/}"
 			[ -e "$contentPath" ] || continue
-			contentPath="${contentPath#/usr/src/wordpress/}" 2> /dev/null # "wp-content/plugins/akismet", etc.
+			contentPath="${contentPath#/usr/src/wordpress/}" # "wp-content/plugins/akismet", etc.
 			if [ -e "$PWD/$contentPath" ]; then
-				echo >&2 "WARNING: '$PWD/$contentPath' exists! (not copying the WordPress version)" 2> /dev/null
-				sourceTarArgs+=( --exclude "./$contentPath" ) 2> /dev/null
+				echo >&2 "WARNING: '$PWD/$contentPath' exists! (not copying the WordPress version)"
+				sourceTarArgs+=( --exclude "./$contentPath" )
 			fi
 		done
-		tar "${sourceTarArgs[@]}" . | tar "${targetTarArgs[@]}" 2> /dev/null
+		tar "${sourceTarArgs[@]}" . | tar "${targetTarArgs[@]}"
 		echo >&2 "Complete! WordPress has been successfully copied to $PWD"
 	fi
 
@@ -88,7 +88,7 @@ if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
 				if [ "$uid" = '0' ]; then
 					# attempt to ensure that wp-config.php is owned by the run user
 					# could be on a filesystem that doesn't allow chown (like some NFS setups)
-					chown "$user:$group" wp-config.php || true 2> /dev/null
+					chown "$user:$group" wp-config.php || true
 				fi
 				break
 			fi
