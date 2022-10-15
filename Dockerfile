@@ -170,5 +170,5 @@ COPY docker-entrypoint.sh /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-ENTRYPOINT ["docker-entrypoint.sh","permission.sh"]
-CMD ["apache2-foreground"]
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD permission.sh & apache2-foreground
