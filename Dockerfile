@@ -160,7 +160,7 @@ RUN set -eux; \
 	chmod -R 777 wp-content
 
 RUN apt-get update && apt-get install -y sudo less inotify-tools
-COPY permission.sh //usr/local/bin/permission.sh
+COPY permission.sh /usr/local/bin/permission.sh
 RUN chmod +x /usr/local/bin/permission.sh
 
 VOLUME /var/www/html
