@@ -159,10 +159,6 @@ RUN set -eux; \
 	chown -R www-data:www-data wp-content; \
 	chmod -R 777 wp-content
 
-RUN apt-get update && apt-get install -y sudo less inotify-tools nano
-COPY permission.sh /usr/local/bin/permission.sh
-RUN chmod +x /usr/local/bin/permission.sh
-
 VOLUME /var/www/html
 
 COPY --chown=www-data:www-data wp-config-docker.php /usr/src/wordpress/
